@@ -4,7 +4,9 @@
       "Bash(cmd.exe /c \"if not exist C:\\\\Users\\\\RajanAgarwal\\\\windchill-exam-v2\\\\.claude mkdir C:\\\\Users\\\\RajanAgarwal\\\\windchill-exam-v2\\\\.claude\")",
       "mcp__Claude_Preview__preview_start",
       "Bash(cmd.exe /c \"type C:\\\\Users\\\\RajanAgarwal\\\\windchill-exam-v2\\\\src\\\\pages\\\\Welcome.tsx > nul 2>&1 && echo exists\")",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(jq -r '.questions[] | \"\"\"\"\\\\\\(.id\\),\\\\\\(.difficulty\\)\"\"\"\"' windchill_mock_test_1.json)",
+      "Bash(python3:*)"
     ]
   }
 }
