@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, deleteField, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { ExamResult, Question, QuestionResult } from '../../types/index';
 import { getQuestionDomain, loadQuestionPool } from '../../utils/examLogic';
@@ -67,15 +67,17 @@ export default function AnalyticsTab() {
   const accuracyColor = (acc: number) => acc >= 60 ? 'bg-emerald-500' : acc >= 40 ? 'bg-amber-500' : 'bg-red-500';
   const accuracyText = (acc: number) => acc >= 60 ? 'text-emerald-600' : acc >= 40 ? 'text-amber-600' : 'text-red-600';
 
-  const deleteAllResults = async () => {
-    if (!window.confirm('Delete ALL exam results? This will clear the analytics and cannot be undone.')) return;
+  const deleteAllAnalytics = async () => {
+    if (!window.confirm('Reset per-question analytics? This clears question-level stats but keeps all exam result records intact.')) return;
     setDeleting(true);
     try {
       const snap = await getDocs(collection(db, 'exam_results'));
-      await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, 'exam_results', d.id))));
+      await Promise.all(
+        snap.docs.map((d) => updateDoc(doc(db, 'exam_results', d.id), { questionResults: deleteField() }))
+      );
       setStats(new Map());
     } catch (err) {
-      console.error('Delete all error:', err);
+      console.error('Reset analytics error:', err);
     } finally {
       setDeleting(false);
     }
@@ -90,11 +92,11 @@ export default function AnalyticsTab() {
             <span className="text-[11px] text-zinc-400">{stats.size} questions with data</span>
             {stats.size > 0 && (
               <button
-                onClick={() => void deleteAllResults()}
+                onClick={() => void deleteAllAnalytics()}
                 disabled={deleting}
                 className="text-[11px] font-semibold text-red-400 hover:text-red-600 border border-red-100 hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg transition-all disabled:opacity-50"
               >
-                {deleting ? 'Deleting...' : 'Delete All Results'}
+                {deleting ? 'Resetting...' : 'Reset Analytics'}
               </button>
             )}
           </div>
