@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import type { ExamResult } from '../types/index';
 
@@ -25,11 +25,12 @@ export default function History() {
         query(
           collection(db, 'exam_results'),
           where('candidateEmail', '==', trimmed),
-          orderBy('examDate', 'desc'),
         ),
       );
       const list: ExamResult[] = [];
       snap.forEach((d) => list.push(d.data() as ExamResult));
+      // Sort client-side — avoids needing a composite Firestore index
+      list.sort((a, b) => new Date(b.examDate).getTime() - new Date(a.examDate).getTime());
       setResults(list);
       setSearched(true);
     } catch (err) {

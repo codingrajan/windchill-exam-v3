@@ -67,10 +67,10 @@ export default function SessionEntry() {
 
     setStarting(true);
     try {
-      // Check retake limit
+      // Check retake limit — query session_participants; gracefully default if read is denied
       const maxRetakes = session.maxRetakes ?? 0;
       let retakeNumber = 1;
-      if (maxRetakes > 0 || true) { // Always query to get retake number
+      try {
         const pSnap = await getDocs(query(
           collection(db, 'session_participants'),
           where('sessionId', '==', session.id),
@@ -83,6 +83,9 @@ export default function SessionEntry() {
           setStarting(false);
           return;
         }
+      } catch {
+        // Read permission not yet granted — proceed as first attempt
+        retakeNumber = 1;
       }
 
       // Create participant record
