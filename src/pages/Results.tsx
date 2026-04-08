@@ -179,9 +179,11 @@ export default function Results() {
     return (
       <div className="text-center py-20 text-zinc-400 font-medium">
         No exam data found.{' '}
-        <button onClick={() => navigate('/')} className="text-indigo-500 underline">
-          Return home
-        </button>
+        {!sessionId && (
+          <button onClick={() => navigate('/')} className="text-indigo-500 underline">
+            Return home
+          </button>
+        )}
       </div>
     );
   }
@@ -311,12 +313,16 @@ export default function Results() {
         <div className="border-t border-zinc-100 pt-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <h3 className="text-sm font-semibold text-zinc-700 uppercase tracking-wider">Detailed Question Review</h3>
-            <button
-              onClick={() => navigate('/')}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm w-full sm:w-auto"
-            >
-              Return Home
-            </button>
+            {sessionId ? (
+              <p className="text-sm text-zinc-400 font-medium">Your results have been recorded.</p>
+            ) : (
+              <button
+                onClick={() => navigate('/')}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm w-full sm:w-auto"
+              >
+                Return Home
+              </button>
+            )}
           </div>
           <div className="space-y-3">
             {questions.map((question, index) => (
