@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { ExamResult, Question, QuestionResult } from '../../types/index';
 import { getQuestionDomain, loadQuestionPool } from '../../utils/examLogic';
@@ -19,6 +19,7 @@ export default function AnalyticsTab() {
   const [loading, setLoading] = useState(true);
   const [diffFilter, setDiffFilter] = useState('');
   const [domainFilter, setDomainFilter] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -66,12 +67,37 @@ export default function AnalyticsTab() {
   const accuracyColor = (acc: number) => acc >= 60 ? 'bg-emerald-500' : acc >= 40 ? 'bg-amber-500' : 'bg-red-500';
   const accuracyText = (acc: number) => acc >= 60 ? 'text-emerald-600' : acc >= 40 ? 'text-amber-600' : 'text-red-600';
 
+  const deleteAllResults = async () => {
+    if (!window.confirm('Delete ALL exam results? This will clear the analytics and cannot be undone.')) return;
+    setDeleting(true);
+    try {
+      const snap = await getDocs(collection(db, 'exam_results'));
+      await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, 'exam_results', d.id))));
+      setStats(new Map());
+    } catch (err) {
+      console.error('Delete all error:', err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-5">
       <div className="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Question Bank Analytics</p>
-          <span className="text-[11px] text-zinc-400">{stats.size} questions with data</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-zinc-400">{stats.size} questions with data</span>
+            {stats.size > 0 && (
+              <button
+                onClick={() => void deleteAllResults()}
+                disabled={deleting}
+                className="text-[11px] font-semibold text-red-400 hover:text-red-600 border border-red-100 hover:border-red-200 hover:bg-red-50 px-3 py-1 rounded-lg transition-all disabled:opacity-50"
+              >
+                {deleting ? 'Deleting...' : 'Delete All Results'}
+              </button>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
           <select value={diffFilter} onChange={(e) => setDiffFilter(e.target.value)} className="bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2.5 text-sm text-zinc-800 font-medium outline-none focus:border-indigo-400 transition-all">

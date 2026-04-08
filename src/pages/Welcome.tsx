@@ -71,6 +71,7 @@ export default function Welcome() {
       targetCount: qCount,
       presetId: mode === 'preset' ? selectedPresetId : null,
       presetQuestionIds: mode === 'preset' ? (selectedPreset?.questions ?? null) : null,
+      ...(mode === 'preset' && selectedPreset ? { sessionName: selectedPreset.name } : {}),
       ...(candidateEmail.trim() ? { candidateEmail: candidateEmail.trim().toLowerCase() } : {}),
     };
 

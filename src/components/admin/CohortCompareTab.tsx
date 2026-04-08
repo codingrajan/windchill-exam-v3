@@ -170,7 +170,7 @@ export default function CohortCompareTab() {
       )}
 
       {selected.size === 0 && !loading && sessions.length > 0 && (
-        <div className="text-center py-12 text-zinc-400 text-sm font-medium bg-white border border-zinc-100 rounded-2xl">
+        <div className="py-12 px-5 text-zinc-400 text-sm font-medium bg-white border border-zinc-100 rounded-2xl">
           Select 2 or 3 sessions above to compare their performance side-by-side.
         </div>
       )}

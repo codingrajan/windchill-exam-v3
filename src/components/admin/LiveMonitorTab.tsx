@@ -105,7 +105,7 @@ export default function LiveMonitorTab() {
                 </span>
               </div>
               {participants.length === 0 ? (
-                <div className="text-center py-16 text-zinc-400 text-sm font-medium">No participants yet for this session.</div>
+                <div className="py-16 px-5 text-zinc-400 text-sm font-medium">No participants yet for this session.</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">

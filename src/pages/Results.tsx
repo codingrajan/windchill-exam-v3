@@ -135,6 +135,8 @@ function buildCertificateHTML(opts: {
   examTitle: string;
   totalQuestions: number;
   correct: number;
+  ptcLogoUrl: string;
+  pluralLogoUrl: string;
 }): string {
   return `<!DOCTYPE html>
 <html>
@@ -147,9 +149,11 @@ function buildCertificateHTML(opts: {
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 32px; }
   .cert { width: 800px; border: 8px solid #4f46e5; border-radius: 24px; padding: 60px 72px; text-align: center; position: relative; background: #fff; }
   .cert::before { content: ''; position: absolute; inset: 12px; border: 2px solid #e0e7ff; border-radius: 16px; pointer-events: none; }
-  .logo-row { display: flex; align-items: center; justify-content: center; gap: 32px; margin-bottom: 40px; }
-  .logo-badge { width: 56px; height: 56px; border-radius: 14px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #4f46e5; border: 2px solid #e0e7ff; }
-  .brand { font-size: 13px; font-weight: 700; color: #6366f1; letter-spacing: 3px; text-transform: uppercase; }
+  .logo-row { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 12px; }
+  .logo-img { height: 48px; object-fit: contain; border-radius: 10px; border: 1px solid #e4e4e7; padding: 6px; background: #fff; }
+  .logo-divider { width: 1px; height: 32px; background: #e4e4e7; }
+  .logo-x { font-size: 18px; font-weight: 800; color: #a1a1aa; }
+  .platform-label { font-size: 11px; font-weight: 700; color: #6366f1; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; }
   .subtitle { font-size: 13px; font-weight: 600; color: #a1a1aa; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
   h1 { font-size: 36px; font-weight: 800; color: #18181b; margin-bottom: 24px; }
   .presented { font-size: 14px; color: #71717a; margin-bottom: 8px; font-weight: 600; }
@@ -167,12 +171,11 @@ function buildCertificateHTML(opts: {
 <body>
 <div class="cert">
   <div class="logo-row">
-    <div class="logo-badge">P</div>
-    <div>
-      <div class="brand">Plural</div>
-      <div style="font-size:11px;color:#a1a1aa;font-weight:600;">Windchill Certification</div>
-    </div>
+    <img class="logo-img" src="${opts.ptcLogoUrl}" alt="PTC" />
+    <span class="logo-x">&times;</span>
+    <img class="logo-img" src="${opts.pluralLogoUrl}" alt="Plural" />
   </div>
+  <div class="platform-label">PTC &times; Plural Mock Exam</div>
   <div class="subtitle">Certificate of Achievement</div>
   <h1>This certifies that</h1>
   <div class="presented">the following candidate has successfully passed</div>
@@ -184,7 +187,7 @@ function buildCertificateHTML(opts: {
   </div>
   <div class="meta">${opts.correct} of ${opts.totalQuestions} questions correct &nbsp;&middot;&nbsp; Issued ${opts.date}</div>
   <div class="pass-badge">&#10003; Passed</div>
-  <div class="footer">Windchill Mock Exam Platform &nbsp;&bull;&nbsp; Issued on ${opts.date}</div>
+  <div class="footer">PTC &times; Plural Windchill Exam Platform &nbsp;&bull;&nbsp; Issued on ${opts.date}</div>
 </div>
 </body>
 </html>`;
@@ -287,13 +290,16 @@ export default function Results() {
   const openCertificate = () => {
     const win = window.open('', '_blank', 'width=920,height=680');
     if (!win) return;
+    const origin = window.location.origin;
     const html = buildCertificateHTML({
       name: examineeName,
       score: summary.percentage,
       date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-      examTitle: sessionName ?? 'Windchill Mock Exam',
+      examTitle: sessionName ?? 'PTC \u00d7 Plural Mock Exam',
       totalQuestions: questions.length,
       correct: summary.correctCount,
+      ptcLogoUrl: `${origin}/images/ptc_logo.png`,
+      pluralLogoUrl: `${origin}/images/plural_logo.jpg`,
     });
     win.document.write(html);
     win.document.close();
@@ -439,7 +445,7 @@ export default function Results() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <h3 className="text-sm font-semibold text-zinc-700 uppercase tracking-wider">Detailed Question Review</h3>
             <div className="flex items-center gap-3 flex-wrap">
-              {summary.passed && (
+              {summary.passed && examMode === 'preset' && (
                 <button
                   onClick={openCertificate}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm flex items-center gap-2"
