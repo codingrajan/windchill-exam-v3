@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { collection, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import type { ExamResult } from '../../types/index';
@@ -9,6 +9,7 @@ interface ExamResultDoc extends ExamResult { docId: string; }
 type FilterScore = 'all' | 'pass' | 'fail';
 
 export default function ReportsTab() {
+  const navigate = useNavigate();
   const [records, setRecords] = useState<ExamResultDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
@@ -123,7 +124,7 @@ export default function ReportsTab() {
                   <thead>
                     <tr className="bg-zinc-50 border-b border-zinc-100">
                       <th className="px-4 py-3 text-left"><LiteCheckbox checked={allSelected} onChange={toggleAll} /></th>
-                      {['Examinee', 'Mode / Session', 'Score', 'Result', 'Time', 'Strongest Domain', 'Date'].map((h) => (
+                      {['Examinee', 'Mode / Session', 'Score', 'Result', 'Time', 'Strongest Domain', 'Date', ''].map((h) => (
                         <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-zinc-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -148,6 +149,14 @@ export default function ReportsTab() {
                         <td className="px-4 py-3 text-zinc-500 font-medium whitespace-nowrap">{fmtTime(r.timeTakenSeconds)}</td>
                         <td className="px-4 py-3 text-zinc-500 font-medium text-[12px] max-w-[140px] truncate">{r.strongestDomain ?? '--'}</td>
                         <td className="px-4 py-3 text-zinc-400 text-[12px] whitespace-nowrap">{fmtDate(r.examDate)}</td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => navigate(`/report/${r.docId}`)}
+                            className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 px-3 py-1 rounded-lg transition-all whitespace-nowrap"
+                          >
+                            View Report
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -157,10 +166,6 @@ export default function ReportsTab() {
         }
       </div>
 
-      {/* Per-question detail note */}
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[11px] text-zinc-400 text-center">
-        Per-question analytics available in the Analytics tab for results with detailed tracking.
-      </motion.p>
     </div>
   );
 }

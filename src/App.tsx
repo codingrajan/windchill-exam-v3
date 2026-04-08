@@ -6,6 +6,7 @@ import Results from './pages/Results';
 import Admin from './pages/Admin';
 import SessionEntry from './pages/SessionEntry';
 import History from './pages/History';
+import ReportDetail from './pages/ReportDetail';
 
 function Header() {
   const navigate  = useNavigate();
@@ -63,6 +64,7 @@ function App() {
             <Route path="/admin"              element={<Admin />} />
             <Route path="/session/:sessionId" element={<SessionEntry />} />
             <Route path="/history"            element={<History />} />
+            <Route path="/report/:resultId"   element={<ReportDetail />} />
           </Routes>
         </main>
 

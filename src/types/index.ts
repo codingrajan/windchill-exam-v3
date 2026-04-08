@@ -24,6 +24,7 @@ export interface QuestionResult {
   correct: boolean;
   skipped: boolean;
   timeTaken: number; // seconds
+  selectedAnswer?: AnswerValue; // what the candidate selected
 }
 
 export interface SessionParticipant {

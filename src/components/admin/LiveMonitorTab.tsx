@@ -33,11 +33,12 @@ export default function LiveMonitorTab() {
   useEffect(() => {
     if (!selectedId) return;
     setIndexError(false);
-    const q = query(collection(db, 'session_participants'), where('sessionId', '==', selectedId), orderBy('startedAt', 'desc'));
+    const q = query(collection(db, 'session_participants'), where('sessionId', '==', selectedId));
     const unsub = onSnapshot(q,
       (snap) => {
         const list: SessionParticipant[] = [];
         snap.forEach((d) => list.push({ ...(d.data() as SessionParticipant), id: d.id }));
+        list.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
         setParticipants(list);
       },
       (err) => {

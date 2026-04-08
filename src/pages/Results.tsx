@@ -234,6 +234,7 @@ export default function Results() {
         correct: eq.isCorrect,
         skipped: eq.isSkipped,
         timeTaken: questionTimings[idx] ?? 0,
+        ...(eq.answer !== undefined ? { selectedAnswer: eq.answer } : {}),
       }),
     );
 

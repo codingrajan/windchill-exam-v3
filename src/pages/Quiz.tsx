@@ -13,14 +13,6 @@ function getTimeLimit(count: number): number {
   return 4500;
 }
 
-function DiffBadge({ level }: { level: string }) {
-  const styles: Record<string, string> = {
-    easy: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-    medium: 'bg-amber-50 text-amber-600 border-amber-100',
-    hard: 'bg-red-50 text-red-600 border-red-100',
-  };
-  return <span className={`text-[11px] font-medium border px-2.5 py-0.5 rounded-full ${styles[level?.toLowerCase()] ?? 'bg-zinc-100 text-zinc-500 border-zinc-200'}`}>{level}</span>;
-}
 
 export default function Quiz() {
   const location = useLocation();
@@ -224,7 +216,6 @@ export default function Quiz() {
               <span className="text-xs font-semibold text-zinc-400">Q {currentIdx + 1} <span className="text-zinc-300">/</span> {questions.length}</span>
               <div className="h-3 w-px bg-zinc-200" />
               <span className="text-[11px] font-medium bg-zinc-100 text-zinc-600 px-2.5 py-0.5 rounded-full">{getQuestionDomain(question)}</span>
-              <DiffBadge level={question.difficulty} />
               {isMulti && <span className="text-[11px] font-medium bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-0.5 rounded-full">Select Multiple</span>}
               <button onClick={() => setFlagged((p) => ({ ...p, [currentIdx]: !p[currentIdx] }))} className={`ml-auto text-[11px] font-semibold px-3 py-1 rounded-full border transition-all ${flagged[currentIdx] ? 'bg-amber-50 border-amber-200 text-amber-600' : 'border-zinc-200 text-zinc-400 hover:border-amber-300 hover:text-amber-500'}`}>
                 {flagged[currentIdx] ? 'Flagged' : 'Flag'}
