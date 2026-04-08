@@ -43,6 +43,7 @@ export default function Welcome() {
   const [selectedPresetId, setSelectedPresetId] = useState('');
   const [randomCount, setRandomCount] = useState<25 | 50 | 75 | 100>(25);
   const [examineeName, setExamineeName] = useState('');
+  const [candidateEmail, setCandidateEmail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function Welcome() {
       targetCount: qCount,
       presetId: mode === 'preset' ? selectedPresetId : null,
       presetQuestionIds: mode === 'preset' ? (selectedPreset?.questions ?? null) : null,
+      ...(candidateEmail.trim() ? { candidateEmail: candidateEmail.trim().toLowerCase() } : {}),
     };
 
     navigate('/quiz', { state: nextConfig });
@@ -108,6 +110,18 @@ export default function Welcome() {
                 placeholder="Enter your full name"
                 value={examineeName}
                 onChange={(e) => setExamineeName(e.target.value)}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all placeholder:text-zinc-300"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                Email <span className="normal-case font-normal text-zinc-300">(optional — for result history)</span>
+              </label>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={candidateEmail}
+                onChange={(e) => setCandidateEmail(e.target.value)}
                 className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all placeholder:text-zinc-300"
               />
             </div>
@@ -231,7 +245,13 @@ export default function Welcome() {
         </div>
       </div>
 
-      <div className="mt-5 text-center">
+      <div className="mt-5 flex items-center justify-center gap-3 flex-wrap">
+        <button
+          onClick={() => navigate('/history')}
+          className="text-[11px] font-medium text-zinc-400 hover:text-indigo-500 border border-zinc-200 hover:border-indigo-200 hover:bg-indigo-50 px-5 py-2 rounded-full transition-all"
+        >
+          My Result History
+        </button>
         <button
           onClick={() => navigate('/admin')}
           className="text-[11px] font-medium text-zinc-400 hover:text-indigo-500 border border-zinc-200 hover:border-indigo-200 hover:bg-indigo-50 px-5 py-2 rounded-full transition-all"

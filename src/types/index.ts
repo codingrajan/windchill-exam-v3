@@ -19,6 +19,27 @@ export interface Question {
   explanation: string;
 }
 
+export interface QuestionResult {
+  questionId: number;
+  correct: boolean;
+  skipped: boolean;
+  timeTaken: number; // seconds
+}
+
+export interface SessionParticipant {
+  id?: string;
+  sessionId: string;
+  sessionName: string;
+  candidateName: string;
+  candidateEmail?: string;
+  startedAt: string;
+  submittedAt?: string;
+  status: 'in_progress' | 'completed';
+  retakeNumber: number;
+  score?: number;
+  passed?: boolean;
+}
+
 export interface ExamResult {
   examineeName: string;
   examMode: ExamMode;
@@ -32,6 +53,9 @@ export interface ExamResult {
   examDate: string;
   sessionId?: string;
   sessionName?: string;
+  candidateEmail?: string;
+  participantId?: string;
+  questionResults?: QuestionResult[];
 }
 
 export interface ExamSession {
@@ -43,6 +67,9 @@ export interface ExamSession {
   isActive: boolean;
   createdAt: string;
   expiresAt?: string;
+  startsAt?: string;
+  maxRetakes?: number;
+  allowedCandidates?: string[];
 }
 
 export interface Preset {
@@ -61,6 +88,8 @@ export interface ExamConfig {
   presetQuestionIds?: number[] | null;
   sessionId?: string;
   sessionName?: string;
+  candidateEmail?: string;
+  participantId?: string;
 }
 
 export interface EvaluatedQuestion {
