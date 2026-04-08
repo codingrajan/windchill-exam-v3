@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useBlocker, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { AnswerMap, ExamConfig, Question } from '../types/index';
 import { buildRandomExam, getQuestionDomain, isQuestionAnswered, loadQuestionPool, shuffle } from '../utils/examLogic';
@@ -39,8 +39,19 @@ export default function Quiz() {
 
   const hasSubmitted = useRef(false);
 
-  // Block in-app navigation (back button, logo click) while exam is active
-  useBlocker(() => isLoaded && !hasSubmitted.current);
+  // Block browser back button while exam is active
+  useEffect(() => {
+    if (!isLoaded) return;
+    // Push a duplicate history entry so the back button hits it instead of leaving
+    window.history.pushState(null, '', window.location.href);
+    const handlePopState = () => {
+      if (!hasSubmitted.current) {
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isLoaded]);
 
   // Block browser refresh / tab close while exam is active
   useEffect(() => {
